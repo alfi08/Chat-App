@@ -42,12 +42,10 @@ export default function Chat() {
 
   useEffect(() => {
     socket.on("message", (message) => {
-      console.log("[mesage]", message);
       setMessages((state) => [...state, message]);
     });
 
     socket.on("roomData", (userdata) => {
-      console.log("[roomData]", userdata);
       setUsers(userdata.users);
     });
   }, []);
