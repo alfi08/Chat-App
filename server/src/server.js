@@ -33,7 +33,6 @@ io.on("connection", (socket) => {
       user: "admin",
       text: `${user.username} has joined the chat`,
     });
-    console.log("getUsersInRoom", user.room, getUsersInRoom(user.room));
     io.to(user.room).emit("roomData", { users: getUsersInRoom(user.room) });
   });
 
