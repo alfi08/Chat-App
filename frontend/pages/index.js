@@ -3,14 +3,15 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 export default function Home() {
-  const [username, setUsername] = useState("");
   const router = useRouter();
+  const [username, setUsername] = useState("");
+  const [room, setRoom] = useState("");
 
   const joinHandler = (e) => {
     e.preventDefault();
 
-    if (username) {
-      router.push(`/chat?username=${username}`);
+    if (username || room) {
+      router.push(`/chat?username=${username}&room=${room}`);
     }
   };
 
@@ -24,6 +25,13 @@ export default function Home() {
           placeholder="username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
+        />
+        <input
+          className="mt-5 text-lg bg-transparent w-full border-b border-black px-2 placeholder-gray-600 focus:outline-none"
+          type="text"
+          placeholder="room"
+          value={room}
+          onChange={(e) => setRoom(e.target.value)}
         />
         <Link href="/chat">
           <button

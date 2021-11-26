@@ -1,13 +1,15 @@
 import { useState, useEffect } from "react";
 import io from "socket.io-client";
-import Link from "next/link";
+import { useRouter } from "next/router";
 
 const ENDPOINT = "http://localhost:5000";
 let socket;
 
 export default function Chat() {
+  const router = useRouter();
   const [message, setMessage] = useState("");
   const [username, setUsername] = useState("");
+  const [room, setRoom] = useState("");
   const [users, setUsers] = useState([]);
   const [messages, setMessages] = useState([]);
 
@@ -22,9 +24,20 @@ export default function Chat() {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     setUsername(urlParams.get("username"));
+    setRoom(urlParams.get("room"));
+
+    const data = {
+      username: urlParams.get("username"),
+      room: urlParams.get("room"),
+    };
 
     socket = io(ENDPOINT);
-    socket.emit("join", urlParams.get("username"));
+    socket.emit("join", data, (error) => {
+      if (error) {
+        alert(error);
+        router.push("/");
+      }
+    });
   }, [ENDPOINT]);
 
   useEffect(() => {
@@ -34,6 +47,7 @@ export default function Chat() {
     });
 
     socket.on("roomData", (userdata) => {
+      console.log("[roomData]", userdata);
       setUsers(userdata.users);
     });
   }, []);
@@ -80,7 +94,7 @@ export default function Chat() {
       </div>
       <div className="bg-gray-700 flex flex-col w-3/12 h-screen">
         <div className="bg-blue-600 text-white font-bold text-center py-4">
-          User Lists
+          {room} members
         </div>
         <ul className="mt-2 px-5 h-auto overflow-auto no-scrollbar">
           {users.length &&
